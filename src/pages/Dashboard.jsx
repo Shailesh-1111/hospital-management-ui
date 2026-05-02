@@ -74,7 +74,7 @@ export default function Dashboard() {
     }
 
     const cursorParam = lastBedId ? `&lastId=${lastBedId}` : ''
-    fetch(`http://localhost:8080/api/v1/beds?floor=${currentFloor}${cursorParam}&size=25`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/beds?floor=${currentFloor}${cursorParam}&size=25`)
       .then(res => res.json())
       .then(data => {
         if (!lastBedId) {
@@ -115,7 +115,7 @@ export default function Dashboard() {
   }, [isFloorLoading, isPageLoading, hasMore, beds])
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8080/api/v1/beds/stream')
+    const eventSource = new EventSource(`${import.meta.env.VITE_API_BASE_URL}/api/v1/beds/stream`)
     
     eventSource.addEventListener('bed-update', (event) => {
       const updatedBed = JSON.parse(event.data)
@@ -152,7 +152,7 @@ export default function Dashboard() {
       const from = bookingData.fromDate + ":00"
       const to = bookingData.toDate + ":00"
       
-      fetch(`http://localhost:8080/api/v1/beds/pricing?type=${type}&from=${from}&to=${to}`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/beds/pricing?type=${type}&from=${from}&to=${to}`)
         .then(res => res.json())
         .then(data => {
           setEstimatedCost(data)
@@ -199,7 +199,7 @@ export default function Dashboard() {
     const idempotencyKey = crypto.randomUUID()
 
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/beds/${selectedBed.id}/book`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/beds/${selectedBed.id}/book`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ export default function Dashboard() {
 
   const handleDischarge = async (bedId) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/v1/beds/${bedId}/discharge`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/beds/${bedId}/discharge`, {
         method: 'POST'
       })
       if (!res.ok) throw new Error("Discharge failed")
